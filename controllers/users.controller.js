@@ -38,24 +38,37 @@ class UsersController {
     //     return this.users;
     // }
 
-    get(id){
+    get(id, response, error){
         let user;
         mysql.connect();
         mysql.query(`SELECT * FROM telacad_users WHERE id = ${id} ;`, (err, rows, fields) => {
-            if (err) throw err
+            if (err) {
+                console.log('eroare');
+                error(err);
+            };
             console.log('rows:',rows[0]);
             user = Object.values(JSON.parse(JSON.stringify(rows[0])));
-            console.log(user);
+            response(user);
           })
         
           mysql.end()  
 
-          return user; 
+          //return user; 
         }    
 
-    add(user){
-        this.users.push(user);
-    }
+    add(user,response, error){
+        mysql.connect();
+        console.log(user.surname, user.username);
+        mysql.query(`INSERT INTO telacad_users(username, surname) VALUES("${user.username}" , "${user.surname}") ;`, (err, rows, fields) => {
+            if (err) {
+                console.log('eroare');
+                error(err);
+            };
+            response('user added');
+          })
+        
+          mysql.end()     
+        }
 }
 
 module.exports = UsersController;
