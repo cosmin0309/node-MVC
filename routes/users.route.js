@@ -6,6 +6,12 @@ class UsersRoute{
         this.UsersController = new UsersController();
     }
     routes(app){
+
+        app.get('/test', (req, res)=> {
+            res.send(this.UsersController.testConnection());
+            
+        })
+
         app.get('/', (req, res) =>{
 
             const users = this.UsersController.getAll();
@@ -25,6 +31,7 @@ class UsersRoute{
                 res.status(404).send('User not found');
             }
         })
+       
         app.post('/', (req, res) =>{
             const body = req.body;
             const user = new UserModel(body.id, body.name, body.surname);
