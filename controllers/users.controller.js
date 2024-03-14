@@ -4,39 +4,22 @@ const mysql = require('../config/config.dev');
 class UsersController {
 
     constructor(){
-        this.users = [
-            new UserModel(1, 'Epure', 'Cosmin')
-        ];
-        console.log('IN CONSTRUCTOR', this.users);
     }
-
-    testConnection(){
-        mysql.connect();
-        mysql.query('SELECT * FROM telacad_users;', (err, rows, fields) => {
-            if (err) throw err
-            console.log('rows:',rows);
-            return rows;
-          })
-          
-
-          mysql.end()   
-        }
-
     
-    getAll(){
+    getAll(response, error){
         mysql.connect();
         mysql.query('SELECT * FROM telacad_users;', (err, rows, fields) => {
-            if (err) throw err
-            console.log('rows:',rows);
-            return rows;
+            if (err) {
+                console.log('eroare');
+                error(err);
+            };
+            let users = Object.values(JSON.parse(JSON.stringify(rows)));
+            response(users);
           })
           
 
           mysql.end()   
         }
-
-    //     return this.users;
-    // }
 
     get(id, response, error){
         let user;
@@ -64,7 +47,7 @@ class UsersController {
                 console.log('eroare');
                 error(err);
             };
-            response('user added');
+            response(`utilizator ${user.surname} adaugat`);
           })
         
           mysql.end()     

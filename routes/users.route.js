@@ -6,21 +6,18 @@ class UsersRoute{
         this.UsersController = new UsersController();
     }
     routes(app){
-
-        app.get('/test', (req, res)=> {
-            res.send(this.UsersController.testConnection());
-            
-        })
-
         app.get('/', (req, res) =>{
-
-            const users = this.UsersController.getAll();
-            console.log(users)
-            if(users)
-                res.json(users);
-            else
-                res.send('No users added');
+            const users = this.UsersController.getAll(
+                (users) =>{
+                    res.send(users);
+                },
+                (error) =>{
+                    res.status(404);
+                    res.send(error);
+                }
+            );
         });
+
         app.get('/:id', (req,res) =>{
             const id = parseInt(req.params.id);
             const user = this.UsersController.get(id,
@@ -31,14 +28,7 @@ class UsersRoute{
                 (error) =>{
                 res.status(404);
                 res.send(error);
-            }
-                );
-            // if(user){
-            //     res.json(user);
-            // }
-            // else{
-            //     res.status(404).send('User not found');
-            // }
+            });
         })
        
         app.post('/', (req, res) =>{
