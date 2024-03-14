@@ -8,12 +8,14 @@ class UsersRoute{
     routes(app){
         app.get('/', (req, res) =>{
             const users = this.UsersController.getAll(
-                (users) =>{
-                    res.send(users);
-                },
-                (error) =>{
-                    res.status(404);
-                    res.send(error);
+                (err, users) =>{
+                    if(err)
+                        {
+                            res.status(404);
+                            res.send(err);
+                        }
+                        else
+                            res.send(users);
                 }
             );
         });
@@ -21,26 +23,29 @@ class UsersRoute{
         app.get('/:id', (req,res) =>{
             const id = parseInt(req.params.id);
             const user = this.UsersController.get(id,
-                (user) =>{
-                    console.log(user);
-                    res.send(user);                    
-                }, 
-                (error) =>{
-                res.status(404);
-                res.send(error);
-            });
-        })
+                (err, user) =>{
+                    if(err)
+                    {
+                        res.status(404);
+                        res.send(err);
+                    }
+                    else
+                        res.send(user);
+                });
+            })
        
         app.post('/', (req, res) =>{
             const body = req.body;
             const user = new UserModel(body.username, body.surname);
             this.UsersController.add(user, 
-                (message) =>{
-                    res.send(message);
-                },
-                (error) =>{
-                    res.status(404);
-                    res.send('eroare');
+                (err) =>{
+                    if(err)
+                    {
+                        res.status(404);
+                        res.send(err);
+                    }
+                    else
+                        res.send(`User ${user.username} a fost adaugat`);
                 }
                 );
         })
