@@ -2,6 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const UsersRoute = require('./routes/users.route');
+const admin = require("firebase-admin");
+const serviceAccount = require("./config/config.json");
+
+//firebaseApp
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+
 //express config
 
 const app = express();
@@ -16,5 +24,5 @@ app.use(express.static(publicPath));
 new UsersRoute().routes(app);
 
 //init server
-const PORT = 5000;
+const PORT = 5001;
 app.listen(PORT, ()=> console.log('Server is running'));

@@ -5,38 +5,27 @@ class UsersRoute{
     constructor(){
         this.UsersController = new UsersController();
     }
+    
     routes(app){
         app.get('/', (req, res) =>{
-            const users = this.UsersController.getAll(
-                (err, users) =>{
-                    if(err)
-                        {
-                            res.status(404);
-                            res.send(err);
-                        }
-                        else
-                            res.send(users);
-                }
-            );
+            const users = this.UsersController.getAll(( user) =>{
+                res.send(user);
+            });
+            
         });
 
         app.get('/:id', (req,res) =>{
-            const id = parseInt(req.params.id);
+            const id = req.params.id;
+            console.log(id);
             const user = this.UsersController.get(id,
-                (err, user) =>{
-                    if(err)
-                    {
-                        res.status(404);
-                        res.send(err);
-                    }
-                    else
-                        res.send(user);
+                (user) =>{
+                    res.send(user);
                 });
             })
        
         app.post('/', (req, res) =>{
             const body = req.body;
-            const user = new UserModel(body.username, body.surname);
+            const user = new UserModel(body.username, body.surname, body.salary);
             this.UsersController.add(user, 
                 (err) =>{
                     if(err)

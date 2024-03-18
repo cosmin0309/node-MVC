@@ -1,8 +1,12 @@
 class UserModel {
-    constructor(name, surname, id){
+    constructor(name, surname, salary){
         this.username = name;
         this.surname = surname;
-        this.id = id;
+        this.salary = salary;
+    }
+
+    doubleSalary(){
+        this.salary *= 2;
     }
 }
 

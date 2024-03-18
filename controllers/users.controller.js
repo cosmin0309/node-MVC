@@ -1,34 +1,33 @@
 const UserModel = require('../models/users.models');
 const mysql = require('../config/config.dev');
 const executeQuery = require('../utils/sql.helper');
+const fs = require('fs');
+const admin = require("firebase-admin");
 class UsersController {
+    
 
     constructor(){
-    }
-    
-    getAll(result){
-        executeQuery('SELECT * FROM telacad_users', 
-            (err, rows) =>{
-                const users = Object.values(JSON.parse(JSON.stringify(rows)))
-                result(err, users)
-            });
+        this.db = admin.firestore();
     }
 
-    get(id, result){
-        executeQuery('SELECT * FROM telacad_users WHERE id = ? ;',
-        (err, rows)=>{
-            const user = Object.values(JSON.parse(JSON.stringify(rows[0])))
-            result(err, user);
-        }, [id]
-        )
+    async getAll(result){
+        const ref = await this.db.collection("telacad_users").get();
+        let users = [];
+        ref.docs.map(doc => {users.push(new UserModel(doc.data().username, doc.data().surname))});
+        result(users);
+    }
+
+    async get(id, result){
+        const ref = await this.db.collection("telacad_users").doc(id).get();
+        const user = new UserModel(ref.data().username, ref.data().surname, ref.data().salary);
+        user.doubleSalary();
+        result(user);
     }    
 
-    add(user,result){
-        executeQuery('INSERT INTO telacad_users(username, surname) VALUES (? , ?);',
-        (err) =>{
-            result(err);
-        },[user.surname, user.username]
-        );
+    async add(user,result){
+      const jsonString = JSON.stringify(user);
+      await this.db.collection("telacad_users").add(JSON.parse(jsonString));
+      result("user added");
     }
 }
 
